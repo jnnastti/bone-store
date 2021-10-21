@@ -3,8 +3,10 @@ package br.com.bonestore.bone.controller;
 import br.com.bonestore.bone.model.Bone;
 import br.com.bonestore.bone.repositorio.RepositorioBone;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -14,15 +16,26 @@ public class BoneController {
     private RepositorioBone repositorio;
 
     @GetMapping
-    public List<Bone> getBone()
+    public ResponseEntity<List<Bone>> getBone()
     {
-        return repositorio.findAll();
+        //ResponseEntity é retorna um Codigo tipo 404 not found e uma entidade tipo um Bone
+        List<Bone> bones = repositorio.findAll();
+        if(bones.isEmpty()){
+            //caso vazio retorna 204
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(bones);
     }
 
     @PostMapping
-    public void setBone(@RequestBody Bone bone)
+    public ResponseEntity<Bone> setBone(@RequestBody Bone bone)
     {
-        System.out.println("alo");
-        repositorio.save(bone);
+        if (bone == null){
+            // Retorna erro 4xx dizendo q sao burro e mandaram bone errado
+            return ResponseEntity.badRequest().build();
+        }
+        Bone boneSalvo = repositorio.save(bone);
+        //retorna 2xx com o boné como ele foi salvo no banco, sem ser mais aquele void
+        return ResponseEntity.accepted().body(boneSalvo);
     }
 }
