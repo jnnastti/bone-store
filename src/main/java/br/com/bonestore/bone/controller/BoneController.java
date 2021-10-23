@@ -31,7 +31,7 @@ public class BoneController {
     public ResponseEntity<Bone> setBone(@RequestBody Bone bone)
     {
         if (bone == null){
-            // Retorna erro 4xx dizendo q sao burro e mandaram bone errado
+            // Retorna erro 4xx
             return ResponseEntity.badRequest().build();
         }
         Bone boneSalvo = repositorio.save(bone);
